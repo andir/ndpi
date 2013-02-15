@@ -22,16 +22,38 @@
  *
  */
 
-#include <stdlib.h>
-#include <errno.h>
-#include <search.h>
+//#include <stdlib.h>
+//#include <errno.h>
+//#include <search.h>
 #include "ndpi_main.h"
 #include "ndpi_protocols.h"
 #include "ndpi_utils.h"
 
+#ifdef OPENDPI_NETFILTER_MODULE
+void* fopen(char* path,...) { return 0;}
+void* fclose(char* path,...) { return 0;}
+
+void* free(void* arg) { return 0; }
+void* malloc(size_t size) { return 0; }
+void* printf(char* a,...) { return 0; }
+void* strdup(char* a,...) { return 0; }
+void* strerror(char* a,...) { return 0; }
+void* errno(char* a,...) { return 0; }
+void* fgets(char* a,...) { return 0; }
+void* strtok(char* a,...) { return 0; }
+void* atoi(char* a) { return 0; }
+#define FILE void*
+#endif
+
 static u_int _ndpi_num_supported_protocols = NDPI_MAX_SUPPORTED_PROTOCOLS, _ndpi_num_custom_protocols = 0;
 
 #ifdef WIN32
+#define COMPAT_FUNCTIONS
+#endif
+#ifdef OPENDPI_NETFILTER_MODULE
+#define COMPAT_FUNCTIONS
+#endif
+#ifdef COMPAT_FUNCTIONS
 /* http://social.msdn.microsoft.com/Forums/uk/vcgeneral/thread/963aac07-da1a-4612-be4a-faac3f1d65ca */
 #define strtok_r strtok
 
